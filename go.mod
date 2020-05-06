@@ -1,4 +1,4 @@
-module BookArchiveServer
+module MyArchiveServer
 
 go 1.13
 

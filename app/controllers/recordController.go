@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"BookArchiveServer/app/models"
+	"MyArchiveServer/app/models"
 	"encoding/csv"
 	"fmt"
 	"github.com/gin-gonic/gin"

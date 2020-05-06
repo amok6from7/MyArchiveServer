@@ -1,6 +1,6 @@
 package main
 
-import "BookArchiveServer/app/controllers"
+import "MyArchiveServer/app/controllers"
 
 func main() {
 	controllers.StartWebServer()

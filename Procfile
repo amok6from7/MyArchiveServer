@@ -1,1 +1,1 @@
-web: BookArchiveServer
+web: MyArchiveServer
