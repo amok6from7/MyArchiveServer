@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>BookArchive Web</title>
+</head>
+<body>
+<h1>BookArchive Records Csv Upload</h1>
+<p>{{.message}}</p>
+<form action="/web/record/upload" method="POST"  enctype="multipart/form-data">
+	<input type="file" name="file">
+	<input type="submit" value="CSV Upload">
+</form>
+</body>
+</html>
