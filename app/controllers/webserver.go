@@ -3,6 +3,7 @@ package controllers
 import (
 	"MyArchiveServer/app/models"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -12,6 +13,7 @@ var router *gin.Engine
 func init() {
 	router = gin.Default()
 	router.LoadHTMLGlob("app/views/*.html")
+	router.Use(cors.Default())
 }
 
 func StartWebServer() {
