@@ -5,7 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type RECORD struct {
+type Record struct {
 	gorm.Model
 	Title      string
 	TitleKana  string
@@ -40,12 +40,12 @@ func FindByAuthor(param string) []Result {
 	return results
 }
 
-func CreateRecord(record *RECORD) {
+func CreateRecord(record *Record) {
 	db.Create(&record)
 }
 
-func UpdateRecord(id string, params *RECORD) {
-	var record RECORD
+func UpdateRecord(id string, params *Record) {
+	var record Record
 	db.First(&record, id)
 	record.Title = params.Title
 	record.TitleKana = params.TitleKana
@@ -55,7 +55,7 @@ func UpdateRecord(id string, params *RECORD) {
 }
 
 func DeleteRecord(id string) {
-	var record RECORD
+	var record Record
 	db.First(&record, id)
 	db.Delete(&record)
 }

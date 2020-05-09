@@ -17,8 +17,8 @@ func apiCreateAuthor(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, response)
 		return
 	}
-	author := models.AUTHOR{
-		Name: name,
+	author := models.Author{
+		Name:     name,
 		NameKana: ctx.PostForm("name_kana"),
 	}
 	models.CreateAuthor(&author)
@@ -46,8 +46,8 @@ func apiUpdateAuthor(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, response)
 		return
 	}
-	author := models.AUTHOR{
-		Name: name,
+	author := models.Author{
+		Name:     name,
 		NameKana: ctx.PostForm("name_kana"),
 	}
 	models.UpdateAuthor(id, &author)
@@ -83,8 +83,9 @@ func webAuthorCsvUpload(ctx *gin.Context) {
 		return
 	}
 	defer file.Close()
+	id := models.CreateAsyncManage("webAuthorCsvUpload")
 	go func() {
-		var authors []models.AUTHOR
+		var authors []models.Author
 		reader := csv.NewReader(file)
 		var line []string
 		for {
@@ -92,8 +93,8 @@ func webAuthorCsvUpload(ctx *gin.Context) {
 			if err != nil {
 				break
 			}
-			author := models.AUTHOR{
-				Name: line[0],
+			author := models.Author{
+				Name:     line[0],
 				NameKana: line[1],
 			}
 			authors = append(authors, author)
@@ -101,6 +102,16 @@ func webAuthorCsvUpload(ctx *gin.Context) {
 		for _, author := range authors {
 			models.CreateAuthor(&author)
 		}
-	}()// TODO 非同期管理テーブル作成
+		models.UpdateAsyncManage(id)
+	}()
 	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "success csv file upload"})
+}
+
+func webAuthorCsvFile(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "authorsUpload.html", gin.H{"message": ""})
+}
+
+func truncateAuthor(ctx *gin.Context) {
+	models.TruncateAuthor()
+	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "truncate Author done"})
 }

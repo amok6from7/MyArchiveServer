@@ -48,7 +48,7 @@ func apiCreateRecord(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
-	record := models.RECORD{
+	record := models.Record{
 		Title:      title,
 		TitleKana:  ctx.PostForm("title_kana"),
 		Evaluation: "0",
@@ -80,7 +80,7 @@ func apiUpdateRecord(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
-	record := models.RECORD{
+	record := models.Record{
 		Title:      title,
 		TitleKana:  ctx.PostForm("title_kana"),
 		Evaluation: ctx.PostForm("evaluation"),
@@ -119,8 +119,9 @@ func webRecordCsvUpload(ctx *gin.Context) {
 		return
 	}
 	defer file.Close()
+	id := models.CreateAsyncManage("webRecordCsvUpload")
 	go func() {
-		var records []models.RECORD
+		var records []models.Record
 		reader := csv.NewReader(file)
 		var line []string
 		for {
@@ -133,7 +134,7 @@ func webRecordCsvUpload(ctx *gin.Context) {
 			if err != nil {
 				author = 0
 			}
-			record := models.RECORD{
+			record := models.Record{
 				Title:      line[0],
 				TitleKana:  line[3],
 				Evaluation: line[1],
@@ -145,6 +146,16 @@ func webRecordCsvUpload(ctx *gin.Context) {
 		for _, record := range records {
 			models.CreateRecord(&record)
 		}
-	}() // TODO 非同期管理テーブル作成
+		models.UpdateAsyncManage(id)
+	}()
 	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "success csv file upload"})
+}
+
+func webRecordCsvFile(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "recordsUpload.html", gin.H{"message": ""})
+}
+
+func truncateRecord(ctx *gin.Context) {
+	models.TruncateRecord()
+	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "truncate Record done"})
 }

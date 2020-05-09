@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>AsyncManagementConsole</title>
+</head>
+<body>
+<a href="/">HOME</a>
+<table>
+	<thead>
+		<tr><td>action</td><td>status</td><td>created</td></tr>
+	</thead>
+	<tbody>
+	{{ range .data }}
+		<tr>
+			<td>{{ .Action }}</td>
+			<td>{{ .Status }}</td>
+			<td>{{ .CreatedAt }}</td>
+		</tr>
+	{{ end }}
+	</tbody>
+</table>
+</body>
+</html>

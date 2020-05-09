@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"MyArchiveServer/app/models"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -37,6 +36,7 @@ func StartWebServer() {
 			recordRoute.GET("/file", webRecordCsvFile)
 			recordRoute.POST("/upload", webRecordCsvUpload)
 		}
+		router.GET("/web/async/console", webSearchAsync)
 	}
 
 	apiRoute := router.Group("/api")
@@ -67,24 +67,6 @@ func StartWebServer() {
 
 func viewTopHandler(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": ""})
-}
-
-func webRecordCsvFile(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "recordsUpload.html", gin.H{"message": ""})
-}
-
-func webAuthorCsvFile(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "authorsUpload.html", gin.H{"message": ""})
-}
-
-func truncateAuthor(ctx *gin.Context) {
-	models.TruncateAuthor()
-	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "truncate Author done"})
-}
-
-func truncateRecord(ctx *gin.Context) {
-	models.TruncateRecord()
-	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "truncate Record done"})
 }
 
 func showUploadError(ctx *gin.Context, message string) {

@@ -26,7 +26,7 @@ func init() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	db.AutoMigrate(RECORD{}, AUTHOR{})
+	db.AutoMigrate(Record{}, Author{}, AsyncManage{})
 	db.LogMode(true)
 }
 
