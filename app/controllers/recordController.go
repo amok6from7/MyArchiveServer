@@ -11,12 +11,28 @@ import (
 
 func apiSearchByTitle(ctx *gin.Context) {
 	param := ctx.Query("title")
+	if len(param) == 0 {
+		response := models.ApiResponse{
+			Status:  "Error",
+			Message: "title is require",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
 	results := models.FindByTitle(param)
 	ctx.JSON(http.StatusOK, results)
 }
 
 func apiSearchByAuthor(ctx *gin.Context) {
 	param := ctx.Query("name")
+	if len(param) == 0 {
+		response := models.ApiResponse{
+			Status:  "Error",
+			Message: "name is require",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
 	results := models.FindByAuthor(param)
 	ctx.JSON(http.StatusOK, results)
 }
@@ -29,14 +45,14 @@ func apiCreateRecord(ctx *gin.Context) {
 			Status:  "Error",
 			Message: "invalid parameter",
 		}
-		ctx.JSON(http.StatusOK, response)
+		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 	record := models.RECORD{
-		Title :      title,
-		TitleKana :  ctx.PostForm("title_kana"),
-		Evaluation : "0",
-		Author :     authorId,
+		Title:      title,
+		TitleKana:  ctx.PostForm("title_kana"),
+		Evaluation: "0",
+		Author:     authorId,
 	}
 	models.CreateRecord(&record)
 	response := models.ApiResponse{
@@ -61,14 +77,14 @@ func apiUpdateRecord(ctx *gin.Context) {
 			Status:  "Error",
 			Message: "invalid parameter",
 		}
-		ctx.JSON(http.StatusOK, response)
+		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 	record := models.RECORD{
-		Title :      title,
-		TitleKana :  ctx.PostForm("title_kana"),
-		Evaluation : ctx.PostForm("evaluation"),
-		Author :     authorId,
+		Title:      title,
+		TitleKana:  ctx.PostForm("title_kana"),
+		Evaluation: ctx.PostForm("evaluation"),
+		Author:     authorId,
 	}
 	models.UpdateRecord(id, &record)
 	response := models.ApiResponse{
@@ -118,10 +134,10 @@ func webRecordCsvUpload(ctx *gin.Context) {
 				author = 0
 			}
 			record := models.RECORD{
-				Title: line[0],
-				TitleKana: line[3],
+				Title:      line[0],
+				TitleKana:  line[3],
 				Evaluation: line[1],
-				Author: author,
+				Author:     author,
 			}
 			records = append(records, record)
 		}
@@ -129,6 +145,6 @@ func webRecordCsvUpload(ctx *gin.Context) {
 		for _, record := range records {
 			models.CreateRecord(&record)
 		}
-	}()// TODO 非同期管理テーブル作成
+	}() // TODO 非同期管理テーブル作成
 	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "success csv file upload"})
 }
