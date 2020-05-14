@@ -41,8 +41,8 @@ func StartWebServer() {
 
 	apiRoute := router.Group("/api")
 	{
-		recordRoute := apiRoute.Group("/record")
 		{
+			recordRoute := apiRoute.Group("/record")
 			recordRoute.GET("/search-title", apiSearchByTitle)
 			recordRoute.GET("/search-author", apiSearchByAuthor)
 			recordRoute.POST("/new", apiCreateRecord)
@@ -52,6 +52,7 @@ func StartWebServer() {
 		}
 		{
 			authorRoute := apiRoute.Group("/author")
+			authorRoute.GET("/search", apiFindAuthorByName)
 			authorRoute.POST("/new", apiCreateAuthor)
 			authorRoute.GET("/edit/:id", apiFindAuthor)
 			authorRoute.POST("/update", apiUpdateAuthor)

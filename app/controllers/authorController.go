@@ -35,6 +35,12 @@ func apiFindAuthor(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, author)
 }
 
+func apiFindAuthorByName(ctx *gin.Context) {
+	name := ctx.Query("name")
+	author := models.ApiFindAuthorByName(name)
+	ctx.JSON(http.StatusOK, author)
+}
+
 func apiUpdateAuthor(ctx *gin.Context) {
 	id := ctx.PostForm("id")
 	name := ctx.PostForm("name")

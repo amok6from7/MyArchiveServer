@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -14,6 +15,13 @@ func ApiFindAuthor(id string) Author {
 	var author Author
 	db.First(&author, id)
 	return author
+}
+
+func ApiFindAuthorByName(param string) []Author {
+	var authors []Author
+	name := fmt.Sprintf("%%%s%%", param)
+	db.Table("authors").Order("name_kana asc").Where("name LIKE ? OR name_kana LIKE ? ", name, name).Select("id, name, name_kana").Scan(&authors)
+	return authors
 }
 
 func CreateAuthor(author *Author) {
