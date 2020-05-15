@@ -16,6 +16,7 @@ type Record struct {
 type Result struct {
 	gorm.Model
 	Title      string `json:"title"`
+	TitleKana  string `json:"title_kana"`
 	Name       string `json:"name"`
 	Evaluation string `json:"evaluation"`
 	AuthorId   int    `json:"author_id"`
@@ -23,7 +24,7 @@ type Result struct {
 
 func FindById(id string) []Result {
 	var results []Result
-	db.Table("records").Where("records.ID = ?", id).Select("records.id, records.title, records.evaluation, authors.id as author_id, authors.name").Joins("left join authors on authors.id = records.author").Scan(&results)
+	db.Table("records").Where("records.ID = ?", id).Select("records.id, records.title, records.title_kana, records.evaluation, authors.id as author_id, authors.name").Joins("left join authors on authors.id = records.author").Scan(&results)
 	return results
 }
 
