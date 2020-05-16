@@ -24,21 +24,35 @@ type Result struct {
 
 func FindById(id string) []Result {
 	var results []Result
-	db.Table("records").Where("records.ID = ?", id).Select("records.id, records.title, records.title_kana, records.evaluation, authors.id as author_id, authors.name").Joins("left join authors on authors.id = records.author").Scan(&results)
+	db.Table("records").
+		Joins("left join authors on authors.id = records.author").
+		Select("records.id, records.title, records.title_kana, records.evaluation, authors.id as author_id, authors.name").
+		Where("records.ID = ?", id).
+		Scan(&results)
 	return results
 }
 
 func FindByTitle(param string) []Result {
 	var results []Result
 	title := fmt.Sprintf("%%%s%%", param)
-	db.Table("records").Order("authors.name_kana asc").Where("records.title LIKE ? OR records.title_kana LIKE ?", title, title).Select("records.id, records.title, records.evaluation, authors.id as author_id, authors.name").Joins("left join authors on authors.id = records.author").Scan(&results)
+	db.Table("records").
+		Joins("left join authors on authors.id = records.author").
+		Select("records.id, records.title, records.evaluation, authors.id as author_id, authors.name").
+		Where("records.title LIKE ? OR records.title_kana LIKE ?", title, title).
+		Order("authors.name_kana asc").
+		Scan(&results)
 	return results
 }
 
 func FindByAuthor(param string) []Result {
 	var results []Result
 	name := fmt.Sprintf("%%%s%%", param)
-	db.Table("records").Order("authors.name_kana asc, records.title_kana asc").Where("authors.name LIKE ? OR authors.name_kana LIKE ? ", name, name).Select("records.id, records.title, authors.id as author_id, authors.name, records.evaluation").Joins("left join authors on authors.id = records.author").Scan(&results)
+	db.Table("records").
+		Joins("left join authors on authors.id = records.author").
+		Select("records.id, records.title, authors.id as author_id, authors.name, records.evaluation").
+		Where("authors.name LIKE ? OR authors.name_kana LIKE ? ", name, name).
+		Order("authors.name_kana asc, records.title_kana asc").
+		Scan(&results)
 	return results
 }
 

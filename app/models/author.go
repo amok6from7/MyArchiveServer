@@ -26,7 +26,11 @@ func ApiFindAuthor(id string) Author {
 func ApiFindAuthorByName(param string) []Author {
 	var authors []Author
 	name := fmt.Sprintf("%%%s%%", param)
-	db.Table("authors").Order("name_kana asc").Where("name LIKE ? OR name_kana LIKE ? ", name, name).Select("id, name, name_kana").Scan(&authors)
+	db.Table("authors").
+		Select("id, name, name_kana").
+		Where("name LIKE ? OR name_kana LIKE ? ", name, name).
+		Order("name_kana asc").
+		Scan(&authors)
 	return authors
 }
 
@@ -50,6 +54,11 @@ func DeleteAuthor(id string) {
 
 func ApiFindCountByAuthor() []AuthorCount {
 	var authorsCount []AuthorCount
-	db.Table("records").Group("authors.name").Order("count desc").Select("authors.name, count(*) as count").Joins("left join authors on records.author = authors.id").Limit(10).Scan(&authorsCount)
+	db.Table("records").
+		Joins("left join authors on records.author = authors.id").
+		Select("authors.name, count(*) as count").
+		Group("authors.name").
+		Order("count desc").
+		Limit(10).Scan(&authorsCount)
 	return authorsCount
 }
