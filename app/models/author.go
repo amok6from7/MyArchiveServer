@@ -11,6 +11,12 @@ type Author struct {
 	NameKana string
 }
 
+type AuthorCount struct {
+	gorm.Model
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
 func ApiFindAuthor(id string) Author {
 	var author Author
 	db.First(&author, id)
@@ -40,4 +46,10 @@ func DeleteAuthor(id string) {
 	var author Author
 	db.First(&author, id)
 	db.Delete(&author)
+}
+
+func ApiFindCountByAuthor() []AuthorCount {
+	var authorsCount []AuthorCount
+	db.Table("records").Group("authors.name").Order("count desc").Select("authors.name, count(*) as count").Joins("left join authors on records.author = authors.id").Limit(10).Scan(&authorsCount)
+	return authorsCount
 }

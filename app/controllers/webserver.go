@@ -57,6 +57,7 @@ func StartWebServer() {
 			authorRoute.GET("/edit/:id", apiFindAuthor)
 			authorRoute.POST("/update", apiUpdateAuthor)
 			authorRoute.POST("/delete/:id", apiDeleteAuthor)
+			authorRoute.GET("/count", ApiFindCountByAuthor)
 		}
 	}
 

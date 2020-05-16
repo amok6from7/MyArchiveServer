@@ -113,6 +113,11 @@ func webAuthorCsvUpload(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "success csv file upload"})
 }
 
+func ApiFindCountByAuthor(ctx *gin.Context) {
+	count := models.ApiFindCountByAuthor()
+	ctx.JSON(http.StatusOK, count)
+}
+
 func webAuthorCsvFile(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "authorsUpload.html", gin.H{"message": ""})
 }
