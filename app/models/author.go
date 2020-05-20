@@ -7,8 +7,8 @@ import (
 
 type Author struct {
 	gorm.Model
-	Name     string
-	NameKana string
+	Name     string `json:"name"`
+	NameKana string `json:"name_kana"`
 }
 
 type AuthorCount struct {
