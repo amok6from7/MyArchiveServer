@@ -17,6 +17,7 @@ func init() {
 
 func StartWebServer() {
 	router.GET("/", viewTopHandler)
+	router.GET("/healthCheck", healthCheck)
 
 	truncateRoute := router.Group("/truncate")
 	{
@@ -73,4 +74,16 @@ func viewTopHandler(ctx *gin.Context) {
 
 func showUploadError(ctx *gin.Context, message string) {
 	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": message})
+}
+
+type healthCheckStatus struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+func healthCheck(ctx *gin.Context) {
+	var status healthCheckStatus
+	status.Status = "OK"
+	status.Message = "health check is ok"
+	ctx.JSON(http.StatusOK, status)
 }
