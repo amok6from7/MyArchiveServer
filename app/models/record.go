@@ -39,7 +39,7 @@ func FindByTitle(param string) []Result {
 		Joins("left join authors on authors.id = records.author").
 		Select("records.id, records.title, records.evaluation, authors.id as author_id, authors.name").
 		Where("records.title LIKE ? OR records.title_kana LIKE ?", title, title).
-		Order("authors.name_kana asc").
+		Order("authors.name_kana COLLATE \"ja_JP.utf8\" asc").
 		Scan(&results)
 	return results
 }
@@ -51,7 +51,7 @@ func FindByAuthor(param string) []Result {
 		Joins("left join authors on authors.id = records.author").
 		Select("records.id, records.title, authors.id as author_id, authors.name, records.evaluation").
 		Where("authors.name LIKE ? OR authors.name_kana LIKE ? ", name, name).
-		Order("authors.name_kana asc, records.title_kana asc").
+		Order("authors.name_kana COLLATE \"ja_JP.utf8\" asc, records.title_kana COLLATE \"ja_JP.utf8\" asc").
 		Scan(&results)
 	return results
 }

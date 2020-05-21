@@ -29,7 +29,7 @@ func ApiFindAuthorByName(param string) []Author {
 	db.Table("authors").
 		Select("id, name, name_kana").
 		Where("name LIKE ? OR name_kana LIKE ? ", name, name).
-		Order("name_kana asc").
+		Order("name_kana COLLATE \"ja_JP.utf8\" asc").
 		Scan(&authors)
 	return authors
 }
