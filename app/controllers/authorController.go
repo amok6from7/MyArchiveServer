@@ -65,7 +65,7 @@ func apiUpdateAuthor(ctx *gin.Context) {
 }
 
 func apiDeleteAuthor(ctx *gin.Context) {
-	authorId := ctx.Param("id")
+	authorId := ctx.PostForm("id")
 	if len(authorId) == 0 {
 		response := models.ApiResponse{
 			Status:  "Error",

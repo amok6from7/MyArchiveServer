@@ -95,7 +95,7 @@ func apiUpdateRecord(ctx *gin.Context) {
 }
 
 func apiDeleteRecord(ctx *gin.Context) {
-	recordId := ctx.Query("id")
+	recordId := ctx.PostForm("id")
 	if len(recordId) == 0 {
 		response := models.ApiResponse{
 			Status:  "Error",
