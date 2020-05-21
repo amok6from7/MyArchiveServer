@@ -28,7 +28,7 @@ func ApiFindAuthorByName(param string) []Author {
 	name := fmt.Sprintf("%%%s%%", param)
 	db.Table("authors").
 		Select("id, name, name_kana").
-		Where("name LIKE ? OR name_kana LIKE ? ", name, name).
+		Where("(name LIKE ? OR name_kana LIKE ?) AND authors.deleted_at IS NULL", name, name).
 		Order("name_kana COLLATE \"ja_JP.utf8\" asc").
 		Scan(&authors)
 	return authors
@@ -57,6 +57,7 @@ func ApiFindCountByAuthor() []AuthorCount {
 	db.Table("records").
 		Joins("left join authors on records.author = authors.id").
 		Select("authors.name, count(*) as count").
+		Where("authors.deleted_at IS NULL").
 		Group("authors.name").
 		Order("count desc").
 		Limit(10).Scan(&authorsCount)

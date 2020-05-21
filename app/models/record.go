@@ -27,7 +27,7 @@ func FindById(id string) []Result {
 	db.Table("records").
 		Joins("left join authors on authors.id = records.author").
 		Select("records.id, records.title, records.title_kana, records.evaluation, authors.id as author_id, authors.name").
-		Where("records.ID = ?", id).
+		Where("records.ID = ? AND records.deleted_at IS NULL", id).
 		Scan(&results)
 	return results
 }
@@ -38,7 +38,7 @@ func FindByTitle(param string) []Result {
 	db.Table("records").
 		Joins("left join authors on authors.id = records.author").
 		Select("records.id, records.title, records.evaluation, authors.id as author_id, authors.name").
-		Where("records.title LIKE ? OR records.title_kana LIKE ?", title, title).
+		Where("(records.title LIKE ? OR records.title_kana LIKE ?) AND records.deleted_at IS NULL", title, title).
 		Order("authors.name_kana COLLATE \"ja_JP.utf8\" asc").
 		Scan(&results)
 	return results
@@ -50,7 +50,7 @@ func FindByAuthor(param string) []Result {
 	db.Table("records").
 		Joins("left join authors on authors.id = records.author").
 		Select("records.id, records.title, authors.id as author_id, authors.name, records.evaluation").
-		Where("authors.name LIKE ? OR authors.name_kana LIKE ? ", name, name).
+		Where("(authors.name LIKE ? OR authors.name_kana LIKE ?) AND records.deleted_at IS NULL", name, name).
 		Order("authors.name_kana COLLATE \"ja_JP.utf8\" asc, records.title_kana COLLATE \"ja_JP.utf8\" asc").
 		Scan(&results)
 	return results
