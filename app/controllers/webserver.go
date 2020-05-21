@@ -17,7 +17,6 @@ func init() {
 
 func StartWebServer() {
 	router.GET("/", viewTopHandler)
-	router.GET("/healthCheck", healthCheck)
 
 	truncateRoute := router.Group("/truncate")
 	{
@@ -42,6 +41,7 @@ func StartWebServer() {
 
 	apiRoute := router.Group("/api")
 	{
+		apiRoute.GET("/healthCheck", healthCheck)
 		{
 			recordRoute := apiRoute.Group("/record")
 			recordRoute.GET("/search-title", apiSearchByTitle)
