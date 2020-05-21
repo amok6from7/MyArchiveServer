@@ -51,7 +51,7 @@ func apiCreateRecord(ctx *gin.Context) {
 	record := models.Record{
 		Title:      title,
 		TitleKana:  ctx.PostForm("title_kana"),
-		Evaluation: "0",
+		Evaluation: ctx.PostForm("evaluation"),
 		Author:     authorId,
 	}
 	models.CreateRecord(&record)
