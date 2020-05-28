@@ -60,6 +60,6 @@ func ApiFindCountByAuthor() []AuthorCount {
 		Where("authors.deleted_at IS NULL").
 		Group("authors.name").
 		Order("count desc").
-		Limit(10).Scan(&authorsCount)
+		Limit(20).Scan(&authorsCount)
 	return authorsCount
 }
