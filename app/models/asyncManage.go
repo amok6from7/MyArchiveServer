@@ -1,6 +1,8 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Status int
 
@@ -17,7 +19,8 @@ type AsyncManage struct {
 
 func FindAsyncManage() []AsyncManage {
 	var asyncManage []AsyncManage
-	db.Limit(5).Order("created_at desc").Find(&asyncManage)
+	err := db.Limit(5).Order("created_at desc").Find(&asyncManage).Error
+	OutputLogIfError(err)
 	return asyncManage
 }
 
@@ -26,13 +29,16 @@ func CreateAsyncManage(actionName string) uint {
 		Action: actionName,
 		Status: START,
 	}
-	db.Create(&asyncManage)
+	err := db.Create(&asyncManage).Error
+	OutputLogIfError(err)
 	return asyncManage.ID
 }
 
 func UpdateAsyncManage(id uint) {
 	var asyncManage AsyncManage
-	db.First(&asyncManage, id)
+	err := db.First(&asyncManage, id).Error
+	OutputLogIfError(err)
 	asyncManage.Status = COMPLETE
-	db.Save(&asyncManage)
+	err = db.Save(&asyncManage).Error
+	OutputLogIfError(err)
 }

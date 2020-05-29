@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
+	"log"
 	"os"
 )
 
@@ -41,4 +42,10 @@ func TruncateAuthor() {
 
 func TruncateRecord() {
 	db.Exec("DELETE FROM records")
+}
+
+func OutputLogIfError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }

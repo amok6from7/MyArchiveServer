@@ -3,10 +3,10 @@ package controllers
 import (
 	"MyArchiveServer/app/models"
 	"encoding/csv"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"sync"
 )
 
 func apiSearchByTitle(ctx *gin.Context) {
@@ -120,34 +120,38 @@ func webRecordCsvUpload(ctx *gin.Context) {
 	}
 	defer file.Close()
 	id := models.CreateAsyncManage("webRecordCsvUpload")
-	go func() {
-		var records []models.Record
-		reader := csv.NewReader(file)
-		var line []string
-		for {
-			line, err = reader.Read()
-			if err != nil {
-				break
-			}
-			authorId := line[2]
-			author, err := strconv.Atoi(authorId)
-			if err != nil {
-				author = 0
-			}
-			record := models.Record{
-				Title:      line[0],
-				TitleKana:  line[3],
-				Evaluation: line[1],
-				Author:     author,
-			}
-			records = append(records, record)
+	var records []models.Record
+	reader := csv.NewReader(file)
+	var line []string
+	for {
+		line, err = reader.Read()
+		if err != nil {
+			break
 		}
-		fmt.Println(records)
-		for _, record := range records {
+		authorId := line[2]
+		author, err := strconv.Atoi(authorId)
+		if err != nil {
+			author = 0
+		}
+		record := models.Record{
+			Title:      line[0],
+			TitleKana:  line[3],
+			Evaluation: line[1],
+			Author:     author,
+		}
+		records = append(records, record)
+	}
+
+	var wg sync.WaitGroup
+	for _, record := range records {
+		wg.Add(1)
+		go func(record models.Record) {
+			defer wg.Done()
 			models.CreateRecord(&record)
-		}
-		models.UpdateAsyncManage(id)
-	}()
+		}(record)
+	}
+	wg.Wait()
+	models.UpdateAsyncManage(id)
 	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "success csv file upload"})
 }
 

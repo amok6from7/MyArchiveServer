@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"sync"
 )
 
 func apiCreateAuthor(ctx *gin.Context) {
@@ -90,26 +91,32 @@ func webAuthorCsvUpload(ctx *gin.Context) {
 	}
 	defer file.Close()
 	id := models.CreateAsyncManage("webAuthorCsvUpload")
-	go func() {
-		var authors []models.Author
-		reader := csv.NewReader(file)
-		var line []string
-		for {
-			line, err = reader.Read()
-			if err != nil {
-				break
-			}
-			author := models.Author{
-				Name:     line[0],
-				NameKana: line[1],
-			}
-			authors = append(authors, author)
+
+	var authors []models.Author
+	reader := csv.NewReader(file)
+	var line []string
+	for {
+		line, err = reader.Read()
+		if err != nil {
+			break
 		}
-		for _, author := range authors {
+		author := models.Author{
+			Name:     line[0],
+			NameKana: line[1],
+		}
+		authors = append(authors, author)
+	}
+
+	var wg sync.WaitGroup
+	for _, author := range authors {
+		wg.Add(1)
+		go func(author models.Author) {
+			defer wg.Done()
 			models.CreateAuthor(&author)
-		}
-		models.UpdateAsyncManage(id)
-	}()
+		}(author)
+	}
+	wg.Wait()
+	models.UpdateAsyncManage(id)
 	ctx.HTML(http.StatusOK, "index.html", gin.H{"message": "success csv file upload"})
 }
 
